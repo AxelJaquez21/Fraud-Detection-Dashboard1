@@ -24,9 +24,27 @@
                 time.innerHTML = date.toLocaleTimeString();
             }, 1000);
         </script>
+        
         <!--Section for diving tittle/section1 and content below-->
         <hr>
-    </div>    
+
+        <div class="content">
+            <!-- welcome tittle-->
+             <h2> Welcome to Fraud Detection </h2>
+             <p>
+                Objective: To provide a comprehensive overview of the Fraud Detection system, including its features, functionalities, and benefits.
+             </p>
+        </div>    
+
+        <div class="form-container">
+            <h2> Insert Files here</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".csv, .xlsx">
+                <input type="submit" value="Upload">
+            </form>
+        </div>
+    </div>
 
 </body>
 </html>
+

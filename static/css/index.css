@@ -5,7 +5,8 @@ html, body {
 }
 
 body {
-    background-color: #121212; /* dark background */
+    background-image: url('../pictures/bg1.gif');
+    background-size: cover;
     display: flex;
     flex-direction: column;
     align-items: center; /* centers horizontally */
@@ -50,4 +51,65 @@ hr {
     left: 10px;
     position: absolute;
     top: 10px;
+}
+
+.content {
+    margin-top: 20px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.content h2 {
+    font-size: 2rem;
+    width: 25ch; /* Adjust width to match text length */
+    border-right: 2px solid white; /* Cursor effect */
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    margin: 0 auto; /* Center the element */
+    animation: typing 4s steps(25) infinite alternate, blink 0.5s step-end infinite;
+
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 26ch; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.content p{
+    color:#fff;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    margin-top: 40px;
+}
+
+.form-container {
+ background-color: darkgray;
+ width: 700px;
+ height: 300px;
+ text-align: center;
+ justify-content: center;
+ align-items: center;
+ position: relative;
+ display: flex;
+ flex-direction: column;
+ margin: 0 auto;
+ margin-top: 70px;
+ border: dashed 2px white;
+ border-radius: 50px;
+}
+.form-container h2 {
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    right: inherit; /
 }
