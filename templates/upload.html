@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Dashboard</title>
+    <style>
+        /* Reset */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('{{ url_for("static", filename="pictures/bg1.gif") }}');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+        }
+
+        /* Current time */
+        #current-time {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* Title section */
+        .tittle-section {
+            text-align: center;
+            margin-top: 50px;
+            position: relative;
+        }
+
+        .tittle-section h1 {
+            font-size: 2rem;
+            display: inline-block;
+        }
+
+        .logo1 {
+            position: absolute;
+            top: -20px;
+            left: -400px;
+            width: 100px;
+            height: 100px;
+        }
+
+        hr {
+            border: 0;
+            height: 2px;
+            background: #fff;
+            margin: 10px auto 0;
+            width: 100%;
+        }
+
+        /* Content section */
+        .content {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .content h2 {
+            font-size: 2rem;
+            width: 25ch;
+            border-right: 2px solid white;
+            white-space: nowrap;
+            overflow: hidden;
+            margin: 0 auto;
+            animation: typing 4s steps(25) infinite alternate, blink 0.5s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 26ch; }
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        .content p {
+            font-size: 1.2rem;
+            margin-top: 40px;
+        }
+
+        /* Form container */
+        .form-container {
+            background-color: rgba(50,50,50,0.8);
+            width: 700px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 70px auto;
+            border: dashed 2px white;
+            border-radius: 50px;
+            padding: 20px;
+        }
+
+        .form-container h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-container input[type="file"] {
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .form-container input[type="submit"] {
+            font-size: 1rem;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 10px;
+            border: none;
+            background-color: #263473;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #e10a0a;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 id="current-time"></h2>
+
+    <div class="tittle-section">
+        <h1>Welcome to the Fraud Detection Dashboard</h1>
+        <img src="{{ url_for('static', filename='pictures/logo2.svg') }}" class="logo1" alt="Logo">
+    </div>
+
+    <hr>
+
+    <div class="content">
+         <h2>Welcome to Fraud Detection</h2>
+         <p>
+            Objective: To provide a comprehensive overview of the Fraud Detection system, including its features, functionalities, and benefits.
+         </p>
+    </div>    
+
+    <div class="form-container">
+        <h2>Insert Files Here</h2>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv, .xlsx" required>
+            <input type="submit" value="Upload">
+        </form>
+    </div>
+
+    <script>
+        // Display current time
+        let timeEl = document.getElementById('current-time');
+        setInterval(() => {
+            let date = new Date();
+            timeEl.innerHTML = date.toLocaleTimeString();
+        }, 1000);
+    </script>
+</body>
+</html>
+
+

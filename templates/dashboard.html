@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fraud Detection Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-4">
+<div class="container">
+  <h2 class="mb-4 text-center">Fraud Detection Dashboard</h2>
+
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Account No</th>
+        <th>DATE</th>
+        <th>TRANSACTION DETAILS</th>
+        <th>VALUE DATE</th>
+        <th>WITHDRAWAL AMT</th>
+        <th>DEPOSIT AMT</th>
+        <th>BALANCE AMT</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in transactions %}
+      <tr {% if row.get('fraud_flag') %} class="table-danger" {% endif %}>
+        <td>{{ row.get('Account No', '') }}</td>
+        <td>{{ row.get('DATE', '') }}</td>
+        <td>{{ row.get('TRANSACTION DETAILS', '') }}</td>
+        <td>{{ row.get('VALUE DATE', '') }}</td>
+        <td>{{ row.get('WITHDRAWAL AMT', '') }}</td>
+        <td>{{ row.get('DEPOSIT AMT', '') }}</td>
+        <td>{{ row.get('BALANCE AMT', '') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="mt-4 text-center">
+    <a href="/" class="btn btn-secondary">Upload Another File</a>
+  </div>
+</div>
+</body>
+</html>
