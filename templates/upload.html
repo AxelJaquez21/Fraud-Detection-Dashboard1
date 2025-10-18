@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fraud Detection Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
 </head>
 
 <body>
@@ -42,8 +41,11 @@
             display: none;
             margin-top: 50px;
         }
+        #sample-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
 
-          /* Layout container */
         .page {
             width:100%;
             max-width:1100px;
@@ -56,7 +58,6 @@
             position: relative;
         }
 
-        /* Header */
         header {
             width:100%;
             display:flex;
@@ -80,7 +81,6 @@
             left: 30%;
             transform: translateX(30%);
             position: relative;
-            
         }
 
         #current-time{
@@ -95,13 +95,12 @@
             width: 100%;
         }
 
-        /* Hero / intro */
-        .hero{
+        .obj{
             width:100%;
             text-align:center;
             padding:18px 12px;
         }
-        .hero .typing {
+        .obj .typing {
             font-size:1.6rem;
             width:26ch;
             margin:0 auto;
@@ -110,7 +109,7 @@
             border-right:2px solid var(--text);
             animation:typing 4s steps(26) infinite alternate, blink 0.6s step-end infinite;
         }
-        .hero p{
+        .obj p{
             max-width:64ch;
             margin:18px auto 0;
             font-size:1rem;
@@ -122,7 +121,7 @@
         @keyframes blink{ 50%{border-color:transparent} }
     </style>
 
-     <div class="page">
+    <div class="page">
         <header>
             <div class="brand">
                 <img src="{{ url_for('static', filename='pictures/logo2.svg') }}" alt="Logo">
@@ -133,113 +132,165 @@
 
         <hr class="divider">
 
-        <main class="hero" role="main" aria-labelledby="intro-title">
+        <main class="obj" role="main" aria-labelledby="intro-title">
             <h2 id="intro-title" class="typing">Welcome to Fraud Detection</h2>
             <p>Objective: To provide a comprehensive overview of the Fraud Detection system, including its features, functionalities, and benefits.</p>
         </main>
     </div>
 
-<div class="form-container">
-    <h2>Upload Your Transactions</h2>
-    <form id="upload-form" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".csv, .xlsx" required class="form-control mb-3">
-        <button type="submit" class="btn btn-primary">Upload</button>
-    </form>
+    <div class="form-container">
+        <h2>Upload Your Transactions</h2>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv, .xlsx" class="form-control mb-3">
 
-    <div id="loading" style="display: none;">
-        <h3>Processing your file, please wait...</h3>
-        <div class="spinner-border text-light mt-3" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Upload</button>
+                <button type="button" id="sample-btn" class="btn btn-success">Use Sample Data</button>
+            </div>
+        </form>
+
+        <div id="loading" style="display: none;">
+            <h3>Processing your file, please wait...</h3>
+            <div class="spinner-border text-light mt-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="container" id="dashboard-container">
-    <h2 class="text-center mb-4">Fraud Detection Dashboard</h2>
-    <table class="table table-striped table-hover text-dark bg-light" id="dashboard-table">
-        <thead class="table-dark">
-            <tr>
-                <th>Account No</th>
-                <th>DATE</th>
-                <th>TRANSACTION DETAILS</th>
-                <th>VALUE DATE</th>
-                <th>WITHDRAWAL AMT</th>
-                <th>DEPOSIT AMT</th>
-                <th>BALANCE AMT</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
-<!-- Upload Another File Button -->
-<div class="mt-4 text-center">
-    <a href="/" class="btn btn-secondary">Upload Another File</a> 
-</div>
+    <div class="container" id="dashboard-container">
+        <h2 class="text-center mb-4">Fraud Detection Dashboard</h2>
+        <table class="table table-striped table-hover text-dark bg-light" id="dashboard-table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Account No</th>
+                    <th>DATE</th>
+                    <th>TRANSACTION DETAILS</th>
+                    <th>VALUE DATE</th>
+                    <th>WITHDRAWAL AMT</th>
+                    <th>DEPOSIT AMT</th>
+                    <th>BALANCE AMT</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
-<script>
-const form = document.getElementById('upload-form');
-const loading = document.getElementById('loading');
-const dashboardContainer = document.getElementById('dashboard-container');
-
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Show loading spinner
-    loading.style.display = 'block';
-    dashboardContainer.style.display = 'none';
-
-    const formData = new FormData(form);
-
-    // Upload file to server
-    await fetch("/", {
-        method: "POST",
-        body: formData
-    });
-
-    // Poll for processed data
-    const checkData = async () => {
-        try {
-            const response = await fetch('/is_ready');
-            const data = await response.json();
-            if (data.ready) {
-                // Fetch transactions
-                const dashResponse = await fetch('/get_data');
-                const transactions = await dashResponse.json();
-
-                // Hide loading spinner, show dashboard
-                loading.style.display = 'none';
-                dashboardContainer.style.display = 'block';
-
-                // Populate table
-                const tbody = document.querySelector('#dashboard-table tbody');
-                tbody.innerHTML = '';
-                transactions.forEach(row => {
-                    const tr = document.createElement('tr');
-                    if (row.fraud_flag) tr.classList.add('table-danger');
-                    tr.innerHTML = `
-                        <td>${row['Account No'] || ''}</td>
-                        <td>${row['DATE'] || ''}</td>
-                        <td>${row['TRANSACTION DETAILS'] || ''}</td>
-                        <td>${row['VALUE DATE'] || ''}</td>
-                        <td>${row['WITHDRAWAL AMT'] || ''}</td>
-                        <td>${row['DEPOSIT AMT'] || ''}</td>
-                        <td>${row['BALANCE AMT'] || ''}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } else {
-                setTimeout(checkData, 2000);
-            }
-        } catch (err) {
-            setTimeout(checkData, 2000);
-        }
-    };
-    checkData();
-});
-</script>
+    <div class="mt-4 text-center">
+        <a href="/" class="btn btn-secondary">Upload Another File</a> 
+    </div>
 
     <script>
-        // current time updater
+    const form = document.getElementById('upload-form');
+    const loading = document.getElementById('loading');
+    const dashboardContainer = document.getElementById('dashboard-container');
+    const tbody = document.querySelector('#dashboard-table tbody');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        loading.style.display = 'block';
+        dashboardContainer.style.display = 'none';
+        tbody.innerHTML = '';  
+
+        const formData = new FormData(form);
+
+        await fetch("/", {
+            method: "POST",
+            body: formData
+        });
+
+        const checkData = async () => {
+            try {
+                const res = await fetch('/is_ready');
+                const data = await res.json();
+                if (data.ready) {
+                    loading.style.display = 'none';
+                    dashboardContainer.style.display = 'block';
+                    loadDataPaginated(0, 5000);
+                } else {
+                    setTimeout(checkData, 3000);
+                }
+            } catch (err) {
+                setTimeout(checkData, 3000);
+            }
+        };
+        checkData();
+    });
+
+    async function loadDataPaginated(start=0, limit=5000) {
+        try {
+            const res = await fetch(`/get_data?start=${start}&limit=${limit}`);
+            const rows = await res.json();
+
+            if (rows.length === 0) return;
+
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                if (row.fraud_flag) tr.classList.add('table-danger');
+                tr.innerHTML = `
+                    <td>${row['Account No'] || ''}</td>
+                    <td>${row['DATE'] || ''}</td>
+                    <td>${row['TRANSACTION DETAILS'] || ''}</td>
+                    <td>${row['VALUE DATE'] || ''}</td>
+                    <td>${row['WITHDRAWAL AMT'] || ''}</td>
+                    <td>${row['DEPOSIT AMT'] || ''}</td>
+                    <td>${row['BALANCE AMT'] || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            setTimeout(() => loadDataPaginated(start + limit, limit), 100);
+        } catch (err) {
+            console.error(err);
+            setTimeout(() => loadDataPaginated(start, limit), 2000);
+        }
+    }
+
+    // ✅ Handle "Use Sample Data" button
+    const sampleBtn = document.getElementById('sample-btn');
+    sampleBtn.addEventListener('click', async () => {
+        loading.style.display = 'block';
+        dashboardContainer.style.display = 'none';
+        tbody.innerHTML = '';
+
+        sampleBtn.disabled = true;
+        sampleBtn.textContent = 'Loading Sample Data...';
+
+        try {
+            const res = await fetch('/sample_data');
+            const rows = await res.json();
+
+            loading.style.display = 'none';
+            dashboardContainer.style.display = 'block';
+
+            if (rows.error) throw new Error(rows.error);
+
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                if (row.fraud_flag) tr.classList.add('table-danger');
+                tr.innerHTML = `
+                    <td>${row['Account No'] || ''}</td>
+                    <td>${row['DATE'] || ''}</td>
+                    <td>${row['TRANSACTION DETAILS'] || ''}</td>
+                    <td>${row['VALUE DATE'] || ''}</td>
+                    <td>${row['WITHDRAWAL AMT'] || ''}</td>
+                    <td>${row['DEPOSIT AMT'] || ''}</td>
+                    <td>${row['BALANCE AMT'] || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error('Error loading sample data:', err);
+            alert('Failed to load sample data.');
+        } finally {
+            sampleBtn.disabled = false;
+            sampleBtn.textContent = 'Use Sample Data';
+            loading.style.display = 'none';
+        }
+    });
+    </script>
+
+    <script>
         (function updateTime(){
             const el = document.getElementById('current-time');
             function tick(){ el.textContent = new Date().toLocaleTimeString(); }
@@ -247,6 +298,5 @@ form.addEventListener('submit', async (e) => {
             setInterval(tick,1000);
         })();
     </script>
-
 </body>
 </html>
