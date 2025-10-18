@@ -4,168 +4,233 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fraud Detection Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+
+<body>
     <style>
-        /* Reset */
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            font-family: Arial, sans-serif;
+      :root{
+            --panel-bg: rgba(50,50,50,0.8);
+            --accent: #e10a0a;
+            --primary: #263473;
+            --text: #fff;
+            --radius: 24px;
         }
 
-        body {
-            background-image: url('{{ url_for("static", filename="pictures/bg1.gif") }}');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: white;
+        
+        *{box-sizing:border-box}
+        html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text)}
+        body{
+            background: center/cover no-repeat url('{{ url_for("static", filename="pictures/bg1.gif") }}');
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:24px;
+            padding:24px;
         }
-
-        /* Current time */
-        #current-time {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.5rem;
-        }
-
-        /* Title section */
-        .tittle-section {
-            text-align: center;
-            margin-top: 50px;
-            position: relative;
-        }
-
-        .tittle-section h1 {
-            font-size: 2rem;
-            display: inline-block;
-        }
-
-        .logo1 {
-            position: absolute;
-            top: -20px;
-            left: -400px;
-            width: 100px;
-            height: 100px;
-        }
-
-        hr {
-            border: 0;
-            height: 2px;
-            background: #fff;
-            margin: 10px auto 0;
-            width: 100%;
-        }
-
-        /* Content section */
-        .content {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .content h2 {
-            font-size: 2rem;
-            width: 25ch;
-            border-right: 2px solid white;
-            white-space: nowrap;
-            overflow: hidden;
-            margin: 0 auto;
-            animation: typing 4s steps(25) infinite alternate, blink 0.5s step-end infinite;
-        }
-
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 26ch; }
-        }
-
-        @keyframes blink {
-            50% { border-color: transparent; }
-        }
-
-        .content p {
-            font-size: 1.2rem;
-            margin-top: 40px;
-        }
-
-        /* Form container */
         .form-container {
             background-color: rgba(50,50,50,0.8);
-            width: 700px;
-            height: 300px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 70px auto;
-            border: dashed 2px white;
-            border-radius: 50px;
-            padding: 20px;
-        }
-
-        .form-container h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
+            padding: 30px;
+            border-radius: 30px;
+            max-width: 700px;
+            margin: 50px auto;
             text-align: center;
         }
-
-        .form-container input[type="file"] {
-            margin-bottom: 20px;
-            font-size: 1rem;
+        #dashboard-container {
+            display: none;
+            margin-top: 50px;
+        }
+          /* Layout container */
+        .page {
+            width:100%;
+            max-width:1100px;
+            display:flex;
+            flex-direction:column;
+            gap:28px;
+            align-items:center;
         }
 
-        .form-container input[type="submit"] {
-            font-size: 1rem;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 10px;
-            border: none;
-            background-color: #263473;
-            color: white;
-            transition: background-color 0.3s;
+        /* Header */
+        header {
+            width:100%;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:16px;
+        }
+        .brand {
+            display:flex;
+            align-items:center;
+            gap:16px;
+        }
+        .brand img{ width:96px; height:auto; display:block }
+        .brand h1{
+            font-size:1.4rem;
+            margin:0;
+            line-height:1.1;
+            font-weight:700;
+        }
+        #current-time{
+            font-size:1.1rem;
         }
 
-        .form-container input[type="submit"]:hover {
-            background-color: #e10a0a;
+        hr.divider{
+            width:100%;
+            height:2px;
+            border:0;
+            background:rgba(255,255,255,0.12);
+            margin:0;
         }
+
+        /* Hero / intro */
+        .hero{
+            width:100%;
+            text-align:center;
+            padding:18px 12px;
+        }
+        .hero .typing {
+            font-size:1.6rem;
+            width:26ch;
+            margin:0 auto;
+            white-space:nowrap;
+            overflow:hidden;
+            border-right:2px solid var(--text);
+            animation:typing 4s steps(26) infinite alternate, blink 0.6s step-end infinite;
+        }
+        .hero p{
+            max-width:64ch;
+            margin:18px auto 0;
+            font-size:1rem;
+            line-height:1.4;
+            opacity:0.95;
+        }
+
+        @keyframes typing{ from{width:0} to{width:26ch} }
+        @keyframes blink{ 50%{border-color:transparent} }
     </style>
-</head>
-<body>
 
-    <h2 id="current-time"></h2>
+     <div class="page">
+        <header>
+            <div class="brand">
+                <img src="{{ url_for('static', filename='pictures/logo2.svg') }}" alt="Logo">
+                <h1>Fraud Detection Dashboard</h1>
+            </div>
+            <div id="current-time" aria-live="polite"></div>
+        </header>
 
-    <div class="tittle-section">
-        <h1>Welcome to the Fraud Detection Dashboard</h1>
-        <img src="{{ url_for('static', filename='pictures/logo2.svg') }}" class="logo1" alt="Logo">
+        <hr class="divider">
+
+        <main class="hero" role="main" aria-labelledby="intro-title">
+            <h2 id="intro-title" class="typing">Welcome to Fraud Detection</h2>
+            <p>Objective: To provide a comprehensive overview of the Fraud Detection system, including its features, functionalities, and benefits.</p>
+        </main>
     </div>
 
-    <hr>
+<div class="form-container">
+    <h2>Upload Your Transactions</h2>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv, .xlsx" required class="form-control mb-3">
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
 
-    <div class="content">
-         <h2>Welcome to Fraud Detection</h2>
-         <p>
-            Objective: To provide a comprehensive overview of the Fraud Detection system, including its features, functionalities, and benefits.
-         </p>
-    </div>    
-
-    <div class="form-container">
-        <h2>Insert Files Here</h2>
-        <form action="/" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".csv, .xlsx" required>
-            <input type="submit" value="Upload">
-        </form>
+    <div id="loading" style="display: none;">
+        <h3>Processing your file, please wait...</h3>
+        <div class="spinner-border text-light mt-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
+</div>
+
+<div class="container" id="dashboard-container">
+    <h2 class="text-center mb-4">Fraud Detection Dashboard</h2>
+    <table class="table table-striped table-hover text-dark bg-light" id="dashboard-table">
+        <thead class="table-dark">
+            <tr>
+                <th>Account No</th>
+                <th>DATE</th>
+                <th>TRANSACTION DETAILS</th>
+                <th>VALUE DATE</th>
+                <th>WITHDRAWAL AMT</th>
+                <th>DEPOSIT AMT</th>
+                <th>BALANCE AMT</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+const form = document.getElementById('upload-form');
+const loading = document.getElementById('loading');
+const dashboardContainer = document.getElementById('dashboard-container');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Show loading spinner
+    loading.style.display = 'block';
+    dashboardContainer.style.display = 'none';
+
+    const formData = new FormData(form);
+
+    // Upload file to server
+    await fetch("/", {
+        method: "POST",
+        body: formData
+    });
+
+    // Poll for processed data
+    const checkData = async () => {
+        try {
+            const response = await fetch('/is_ready');
+            const data = await response.json();
+            if (data.ready) {
+                // Fetch transactions
+                const dashResponse = await fetch('/get_data');
+                const transactions = await dashResponse.json();
+
+                // Hide loading spinner, show dashboard
+                loading.style.display = 'none';
+                dashboardContainer.style.display = 'block';
+
+                // Populate table
+                const tbody = document.querySelector('#dashboard-table tbody');
+                tbody.innerHTML = '';
+                transactions.forEach(row => {
+                    const tr = document.createElement('tr');
+                    if (row.fraud_flag) tr.classList.add('table-danger');
+                    tr.innerHTML = `
+                        <td>${row['Account No'] || ''}</td>
+                        <td>${row['DATE'] || ''}</td>
+                        <td>${row['TRANSACTION DETAILS'] || ''}</td>
+                        <td>${row['VALUE DATE'] || ''}</td>
+                        <td>${row['WITHDRAWAL AMT'] || ''}</td>
+                        <td>${row['DEPOSIT AMT'] || ''}</td>
+                        <td>${row['BALANCE AMT'] || ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                setTimeout(checkData, 2000);
+            }
+        } catch (err) {
+            setTimeout(checkData, 2000);
+        }
+    };
+    checkData();
+});
+</script>
 
     <script>
-        // Display current time
-        let timeEl = document.getElementById('current-time');
-        setInterval(() => {
-            let date = new Date();
-            timeEl.innerHTML = date.toLocaleTimeString();
-        }, 1000);
+        // current time updater
+        (function updateTime(){
+            const el = document.getElementById('current-time');
+            function tick(){ el.textContent = new Date().toLocaleTimeString(); }
+            tick();
+            setInterval(tick,1000);
+        })();
     </script>
+
 </body>
 </html>
-
-

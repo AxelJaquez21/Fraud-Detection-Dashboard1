@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import threading
 import io
@@ -16,31 +16,34 @@ COLUMNS_DISPLAY = [
 ]
 
 # ==============================
-# Upload Page
+# Upload & Processing
 # ==============================
 @app.route("/", methods=["GET", "POST"])
 def upload_file():
+    global processed_data
     if request.method == "POST":
-        file = request.files['file']
+        file = request.files.get('file')
         if file:
             file_bytes = file.read()
             filename = file.filename
 
-            # Start background thread for processing
+            # Reset previous data
+            processed_data = []
+
+            # Start background processing thread
             threading.Thread(target=process_data, args=(file_bytes, filename)).start()
 
-            # Redirect to loading screen
-            return redirect(url_for('loading_page'))
+            # Return immediately (frontend will poll for data)
+            return '', 202  # HTTP 202 Accepted
 
-    return render_template("upload.html")
-
+    return render_template("upload.html")  # single-page upload + dashboard
 
 # ==============================
 # Background Data Processing
 # ==============================
 def process_data(file_bytes, filename):
     global processed_data
-    time.sleep(3)  # simulate some loading time
+    time.sleep(2)  # simulate processing time
 
     buffer = io.BytesIO(file_bytes)
 
@@ -54,21 +57,19 @@ def process_data(file_bytes, filename):
         processed_data = df.to_dict(orient='records')
         return
 
-    # Normalize column names (lowercase, no spaces)
+    # Normalize columns (lowercase, no spaces)
     df.columns = [col.strip().replace(" ", "").lower() for col in df.columns]
 
-    # Add a fraud flag: mark withdrawals > 10,000 as suspicious
+    # Add fraud flag (withdrawals > 10,000)
     if 'withdrawalamt' in df.columns:
         df['fraud_flag'] = df['withdrawalamt'] > 10000
     else:
         df['fraud_flag'] = False
 
-    # Map normalized columns back to display names
-    normalized_to_display = {
-        col.strip().replace(" ", "").lower(): col for col in COLUMNS_DISPLAY
-    }
+    # Map normalized columns to display names
+    normalized_to_display = {col.strip().replace(" ", "").lower(): col for col in COLUMNS_DISPLAY}
 
-    # Build final processed data for dashboard
+    # Build processed data list
     processed_data = []
     for _, row in df.iterrows():
         row_dict = {}
@@ -78,35 +79,22 @@ def process_data(file_bytes, filename):
         row_dict['fraud_flag'] = bool(row.get('fraud_flag', False))
         processed_data.append(row_dict)
 
-
 # ==============================
-# Loading Page
-# ==============================
-@app.route("/loading")
-def loading_page():
-    return render_template("loading.html")
-
-
-# ==============================
-# Ready Check Endpoint
+# Endpoint: Check if data is ready
 # ==============================
 @app.route("/is_ready")
 def is_ready():
-    """AJAX endpoint for loading page to check if processing is done"""
     return jsonify({'ready': len(processed_data) > 0})
 
+# ==============================
+# Endpoint: Fetch processed data
+# ==============================
+@app.route("/get_data")
+def get_data():
+    return jsonify(processed_data)
 
 # ==============================
-# Dashboard Page
-# ==============================
-@app.route("/dashboard")
-def dashboard():
-    """Display processed transaction data"""
-    return render_template("dashboard.html", transactions=processed_data)
-
-
-# ==============================
-# Run the App
+# Run the app
 # ==============================
 if __name__ == "__main__":
     app.run(debug=True)
