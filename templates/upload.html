@@ -72,6 +72,7 @@
             position: relative;
         }
         .brand img{ width:96px; height:auto; display:block }
+
         .brand h1{
             font-size:1.8rem;
             margin:0;
@@ -125,9 +126,100 @@
         .brand h1 { font-size: 1.2rem; }
         .obj .typing { font-size: 1.1rem; }
         .form-container { padding: 20px; }
-        button, input, .btn { font-size: 1rem; }
+        button, input, .btn, .current-time { font-size: 1rem; }
+
+        /* General layout */
+        body {
+        padding: 16px;
         }
-        
+
+        /* Header section */
+        header {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Title centered */
+        .brand {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .brand h1 {
+            font-size: 1.3rem;
+            text-align: center;
+            margin-top: 4px;
+            left: 0;
+            transform: none;
+        }
+
+        /* Keep clock at top right with smaller font */
+        #current-time {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 1.2rem;
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        /* Intro text */
+        .obj .typing {
+            font-size: 1.1rem;
+        }
+        .obj p {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* Upload form */
+        .form-container {
+            padding: 20px;
+            width: 95%;
+            margin-top: 15px;
+        }
+        button, input, .btn {
+            font-size: 1rem;
+        }
+
+        /* Dashboard container */
+        #dashboard-container {
+            margin-top: 25px;
+            padding: 0 5px;
+            width: 100%;
+        }
+
+        #dashboard-container h2 {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #dashboard-container .table-responsive {
+            border-radius: 10px;
+            overflow-x: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            max-height: 60vh;
+            background: rgba(255,255,255,0.95);
+        }
+
+        #dashboard-container table {
+            font-size: 0.85rem;
+        }
+        #dashboard-container th, 
+        #dashboard-container td {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        }
+
     </style>
 
     <div class="page">
